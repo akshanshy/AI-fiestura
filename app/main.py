@@ -1,6 +1,7 @@
 
 from fastapi import FastAPI, Query
 from typing import Optional
+from pydantic import BaseModel, Field
 app = FastAPI()
 
 
@@ -34,3 +35,14 @@ def health_check():
         "uptime": "24 hours"
     }
     return health
+
+class ChatRequest(BaseModel):
+    message: str = Field(min_length=1, max_length=1000)
+
+
+@app.post("/chat")
+def chat(request: ChatRequest):
+    return {
+        "message": request.message,
+        "reply": f"You asked: {request.message}"
+    }
