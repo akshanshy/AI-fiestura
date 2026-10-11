@@ -1,5 +1,5 @@
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from typing import Optional
 app = FastAPI()
 
@@ -11,7 +11,7 @@ def home():
 
 
 @app.get("/events")
-def get_events(max_price: Optional[int] = None):
+def get_events(max_price: Optional[int] = Query(default=None, ge=0)):
     events = [
         {"id": 1, "title": "AI Workshop", "price": 100},
         {"id": 2, "title": "Hackathon", "price": 200},
