@@ -1,7 +1,8 @@
-
+from app.services.ai_service import generate_ai_response
 from fastapi import FastAPI, Query
 from typing import Optional
 from pydantic import BaseModel, Field
+from app.tools.event_tools import search_events
 app = FastAPI()
 
 
@@ -40,9 +41,17 @@ class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=1000)
 
 
+
 @app.post("/chat")
 def chat(request: ChatRequest):
+    reply = generate_ai_response(request.message)
+
     return {
         "message": request.message,
-        "reply": f"You asked: {request.message}"
+        "reply": reply
     }
+
+
+@app.get("/test-event-search")
+def test_event_search(max_price: int | None = None, category: str | None = None):
+    return {"events": search_events(max_price, category)}
