@@ -42,14 +42,14 @@ class ChatRequest(BaseModel):
 
 
 
-@app.post("/chat")
+@app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
     reply = generate_ai_response(request.message)
 
-    return {
-        "message": request.message,
-        "reply": reply
-    }
+    return ChatResponse(
+        message=request.message,
+        reply=reply,
+    )
 
 
 @app.get("/test-event-search")
