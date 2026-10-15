@@ -11,22 +11,35 @@ def home():
     return {"message": "Welcome to AI-Fiestura!"}
 
 
+class EventResponse(BaseModel):
+    id: int
+    title: str
+    category: str
+    price: int
 
-@app.get("/events")
+
+@app.get("/events", response_model=list[EventResponse])
 def get_events(max_price: Optional[int] = Query(default=None, ge=0)):
     events = [
-        {"id": 1, "title": "AI Workshop", "price": 100},
-        {"id": 2, "title": "Hackathon", "price": 200},
-        {"id": 3, "title": "Coding Contest", "price": 0}
+        EventResponse(
+            id=1, title="AI Workshop", category="Workshop", price=100
+        ),
+        EventResponse(
+            id=2, title="Hackathon", category="Competition", price=200
+        ),
+        EventResponse(
+            id=3, title="Coding Contest", category="Competition", price=0
+        ),
     ]
 
     if max_price is not None:
         events = [
             event for event in events
-            if event["price"] <= max_price
+            if event.price <= max_price
         ]
 
-    return {"events": events}
+    return events
+
 
 
 @app.get("/health")
