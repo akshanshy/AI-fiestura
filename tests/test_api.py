@@ -1,6 +1,6 @@
 
 from fastapi.testclient import TestClient
-
+from app.tools.event_tools import search_events
 from app.main import app
 
 client = TestClient(app)
@@ -47,3 +47,22 @@ def test_chat_rejects_long_message():
     )
 
     assert response.status_code == 422
+
+def test_search_events_by_max_price():
+    results = search_events(max_price=0)
+
+    assert len(results) == 1
+    assert results[0]["title"] == "Coding Contest"
+
+
+def test_search_events_by_category():
+    results = search_events(category="AI")
+
+    assert any(event["title"] == "AI Workshop" for event in results)
+
+
+def test_search_events_with_both_filters():
+    results = search_events(max_price=100, category="AI")
+
+    assert len(results) == 1
+    assert results[0]["title"] == "AI Workshop"
