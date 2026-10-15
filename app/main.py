@@ -40,7 +40,9 @@ def health_check():
 class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=1000)
 
-
+class ChatResponse(BaseModel):
+    message: str
+    reply: str
 
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
