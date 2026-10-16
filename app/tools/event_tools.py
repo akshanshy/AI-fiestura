@@ -1,25 +1,4 @@
-
-events = [
-    {
-        "id": 1,
-        "title": "AI Workshop",
-        "category": "AI",
-        "price": 100
-    },
-    {
-        "id": 2,
-        "title": "Hackathon",
-        "category": "Technology",
-        "price": 200
-    },
-    {
-        "id": 3,
-        "title": "Coding Contest",
-        "category": "Programming",
-        "price": 0
-    }
-]
-
+from app.data.events import events
 
 def search_events(max_price=None, category=None):
     results = events
@@ -37,3 +16,11 @@ def search_events(max_price=None, category=None):
         ]
 
     return results
+
+
+def get_event_by_id(event_id: int):
+    for event in events:
+        if event["id"] == event_id:
+            return event
+
+    return None

@@ -3,6 +3,9 @@ from fastapi import FastAPI, Query
 from typing import Optional
 from pydantic import BaseModel, Field
 from app.tools.event_tools import search_events
+from app.data.events import events
+from fastapi import HTTPException
+from app.tools.event_tools import search_events, get_event_by_id
 app = FastAPI()
 
 
@@ -19,28 +22,30 @@ class EventResponse(BaseModel):
 
 
 @app.get("/events", response_model=list[EventResponse])
-def get_events(max_price: Optional[int] = Query(default=None, ge=0)):
-    events = [
-        EventResponse(
-            id=1, title="AI Workshop", category="Workshop", price=100
-        ),
-        EventResponse(
-            id=2, title="Hackathon", category="Competition", price=200
-        ),
-        EventResponse(
-            id=3, title="Coding Contest", category="Competition", price=0
-        ),
-    ]
+def get_events(
+    max_price: Optional[int] = Query(default=None, ge=0)
+):
+    filtered_events = events
 
     if max_price is not None:
-        events = [
-            event for event in events
-            if event.price <= max_price
+        filtered_events = [
+            event for event in filtered_events
+            if event["price"] <= max_price
         ]
 
-    return events
+    return filtered_events
 
+@app.get("/events/{event_id}", response_model=EventResponse)
+def get_event(event_id: int):
+    event = get_event_by_id(event_id)
 
+    if event is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Event not found",
+        )
+
+    return event
 
 @app.get("/health")
 def health_check():
