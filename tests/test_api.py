@@ -66,3 +66,16 @@ def test_search_events_with_both_filters():
 
     assert len(results) == 1
     assert results[0]["title"] == "AI Workshop"
+
+def test_get_existing_event():
+    response = client.get("/events/1")
+
+    assert response.status_code == 200
+    assert response.json()["title"] == "AI Workshop"
+
+
+def test_get_missing_event():
+    response = client.get("/events/999")
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Event not found"

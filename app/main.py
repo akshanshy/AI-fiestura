@@ -1,4 +1,6 @@
 from app.services.ai_service import generate_ai_response
+import logging
+from fastapi import FastAPI, Query, HTTPException
 from fastapi import FastAPI, Query
 from typing import Optional
 from pydantic import BaseModel, Field
