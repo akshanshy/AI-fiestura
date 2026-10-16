@@ -10,9 +10,12 @@ from fastapi import HTTPException
 from app.tools.event_tools import search_events, get_event_by_id
 app = FastAPI()
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @app.get("/")
 def home():
+    logger.info("Home endpoint accessed")
     return {"message": "Welcome to AI-Fiestura!"}
 
 
@@ -66,13 +69,23 @@ class ChatResponse(BaseModel):
 
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
-    reply = generate_ai_response(request.message)
+    try:
+        reply = generate_ai_response(request.message)
 
-    return ChatResponse(
-        message=request.message,
-        reply=reply,
-    )
+        return ChatResponse(
+            message=request.message,
+            reply=reply,
+        )
 
+    except Exception:
+        logger.exception(
+            "Unexpected error while generating chat response"
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="An unexpected error occurred while processing your request.",
+        )
 
 @app.get("/test-event-search")
 def test_event_search(max_price: int | None = None, category: str | None = None):
