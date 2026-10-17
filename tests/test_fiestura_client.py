@@ -28,3 +28,13 @@ def test_backend_connection_error():
     assert result == {
         "error": "Could not connect to Fiestura backend"
     }
+def test_backend_timeout():
+    with patch(
+        "app.clients.fiestura_client.httpx.get",
+        side_effect=httpx.TimeoutException("Request timed out"),
+    ):
+        result = check_fiestura_backend("http://fiestura.test")
+
+    assert result == {
+        "error": "Fiestura backend timed out"
+    }
