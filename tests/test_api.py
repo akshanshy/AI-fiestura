@@ -1,4 +1,5 @@
-
+import logging
+from unittest.mock import patch
 from fastapi.testclient import TestClient
 from app.tools.event_tools import search_events
 from app.main import app
@@ -79,3 +80,29 @@ def test_get_missing_event():
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Event not found"
+
+def test_chat_handles_unexpected_error(caplog):
+    with patch(
+        "app.main.generate_ai_response",
+        side_effect=RuntimeError("Sensitive internal detail"),
+    ):
+        with caplog.at_level(logging.ERROR):
+            response = client.post(
+                "/chat",
+                json={"message": "Find events"},
+            )
+
+    # API returns the correct status
+    assert response.status_code == 500
+
+    # Client receives a safe message
+    assert response.json()["detail"] == (
+        "An unexpected error occurred while processing your request."
+    )
+
+    # Internal exception details aren't exposed to the client
+    assert "Sensitive internal detail" not in response.text
+
+    # Server logs contain useful debugging information
+    assert "Unexpected error while generating chat response" in caplog.text
+    assert "Sensitive internal detail" in caplog.text
