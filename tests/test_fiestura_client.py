@@ -2,7 +2,7 @@ import httpx
 from unittest.mock import patch
 
 from app.clients.fiestura_client import check_fiestura_backend
-
+from app.clients.fiestura_client import fetch_fiestura_events
 
 def test_backend_health_success():
     mock_response = httpx.Response(
@@ -77,3 +77,10 @@ def test_backend_invalid_json():
     assert result == {
         "error": "Fiestura backend returned invalid JSON"
     }
+def test_fetch_real_fiestura_events():
+    result = fetch_fiestura_events("http://localhost:5000")
+
+    assert "events" in result, result
+    assert isinstance(result["events"], list)
+
+    print(f"\nFetched {len(result['events'])} events from Fiestura")
