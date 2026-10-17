@@ -38,3 +38,42 @@ def test_backend_timeout():
     assert result == {
         "error": "Fiestura backend timed out"
     }
+    
+def test_backend_http_error():
+    mock_response = httpx.Response(
+        500,
+        json={"detail": "Internal server error"},
+        request=httpx.Request(
+            "GET",
+            "http://fiestura.test/health",
+        ),
+    )
+
+    with patch(
+        "app.clients.fiestura_client.httpx.get",
+        return_value=mock_response,
+    ):
+        result = check_fiestura_backend("http://fiestura.test")
+
+    assert result == {
+        "error": "Fiestura backend returned an unsuccessful status"
+    }
+def test_backend_invalid_json():
+    mock_response = httpx.Response(
+        200,
+        content=b"this is not valid JSON",
+        request=httpx.Request(
+            "GET",
+            "http://fiestura.test/health",
+        ),
+    )
+
+    with patch(
+        "app.clients.fiestura_client.httpx.get",
+        return_value=mock_response,
+    ):
+        result = check_fiestura_backend("http://fiestura.test")
+
+    assert result == {
+        "error": "Fiestura backend returned invalid JSON"
+    }
