@@ -20,10 +20,14 @@ def check_fiestura_backend(base_url: str) -> dict:
         return {"error": "Fiestura backend returned invalid JSON"}
 
 
-def fetch_fiestura_events(base_url: str) -> dict:
+def fetch_fiestura_events(base_url: str,
+    page:int =1,
+    limit:int =20,
+    ) -> dict:
     try:
         response = httpx.get(
             f"{base_url}/events",
+            params={"page": page, "limit": limit},
             timeout=5.0,
         )
         response.raise_for_status()
