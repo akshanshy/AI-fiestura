@@ -1,4 +1,5 @@
 
+from email.mime import text
 import re
 
 from app.tools.event_tools import search_events
@@ -35,12 +36,15 @@ def generate_ai_response(message: str) -> str:
     category = None
 
     if re.search(r"\bai\b", text):
-        category = "AI"
-    elif "technology" in text or "tech events" in text:
-        category = "Technology"
+       category = "AI"
+    elif (
+    "technical" in text
+    or "technology" in text
+    or "tech events" in text
+    ):
+       category = "Technical"
     elif "programming" in text or "coding" in text:
         category = "Programming"
-
     # Execute our event-search tool
     events = search_events(
         max_price=max_price,
