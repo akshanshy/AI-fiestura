@@ -36,17 +36,46 @@ def test_health_endpoint():
     assert response.status_code == 200
 
 
-@patch("app.tools.event_tools.get_events", return_value=MOCK_EVENTS)
-def test_chat_finds_free_events(mock_get_events):
+@patch("app.tools.event_tools.get_events", return_value=[
+    # 1. Free Technical event
+    {
+        "id": 1,
+        "title": "Introduction to Python Programming",
+        "category": "Technical",
+        "is_free": True,
+        "price": 0.00
+    },
+    # 2. Paid Technical event
+    {
+        "id": 2,
+        "title": "Advanced Microservices Architecture Workshop",
+        "category": "Technical",
+        "is_free": False,
+        "price": 49.99
+    },
+    # 3. Free Non-Technical event
+    {
+        "id": 3,
+        "title": "Community Networking & Coffee Mixer",
+        "category": "Social",
+        "is_free": True,
+        "price": 0.00
+    }
+    ])
+def test_chat_finds_free_technical_events(mock_get_events):
     response = client.post(
         "/chat",
-        json={"message": "Find free events"},
+        json={"message": "Find free technical events"},
     )
 
     assert response.status_code == 200
     data = response.json()
-    assert data["message"] == "Find free events"
-    assert "Coding Contest" in data["reply"]
+    assert data["message"] == "Find free technical events"
+    reply = data["reply"]
+
+    assert "Introduction to Python Programming" in reply
+    assert "Advanced Microservices Architecture Workshop" not in reply
+    assert "Community Networking & Coffee Mixer" not in reply
 
 
 def test_chat_rejects_empty_message():
