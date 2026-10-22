@@ -154,3 +154,14 @@ def test_chat_handles_unexpected_error(caplog):
     assert "Sensitive internal detail" not in response.text
     assert "Unexpected error while generating chat response" in caplog.text
     assert "Sensitive internal detail" in caplog.text
+
+
+@patch("app.tools.event_tools.get_events", return_value=[])
+def test_chat_handles_no_matching_events(mock_get_events):
+    response = client.post(
+        "/chat",
+        json={"message": "Find free technical events"}
+
+        )
+    assert response.status_code == 200
+    assert response.json()["reply"] == ("No matching events found. Try different filters.")
