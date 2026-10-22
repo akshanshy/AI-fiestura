@@ -155,6 +155,18 @@ def test_chat_handles_unexpected_error(caplog):
     assert "Unexpected error while generating chat response" in caplog.text
     assert "Sensitive internal detail" in caplog.text
 
+@patch(
+    "app.tools.event_tools.get_events",
+    side_effect=RuntimeError("Could not connect to Fiestura backend"),
+)
+def test_chat_handles_fiestura_backend_failure(mock_get_events):
+    response = client.post(
+        "/chat",
+        json={"message": "Find free technical events"},
+    )
+
+    assert response.status_code == 500
+    assert "Could not connect to Fiestura backend" not in response.text
 
 @patch("app.tools.event_tools.get_events", return_value=[])
 def test_chat_handles_no_matching_events(mock_get_events):
