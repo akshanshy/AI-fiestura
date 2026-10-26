@@ -6,10 +6,10 @@ from fastapi import FastAPI, Query, HTTPException
 from pydantic import BaseModel, Field
 
 from app.data.events import events
-from app.services.ai_provider import RuleBasedAIProvider
+from app.services.provider_factory import get_ai_provider
 from app.tools.event_tools import search_events, get_event_by_id
 app = FastAPI()
-ai_provider = RuleBasedAIProvider()
+ai_provider = get_ai_provider()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
