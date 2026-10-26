@@ -1,15 +1,15 @@
-from app.services.ai_service import generate_ai_response
+
 import logging
-from fastapi import FastAPI, Query, HTTPException
-from fastapi import FastAPI, Query
 from typing import Optional
+
+from fastapi import FastAPI, Query, HTTPException
 from pydantic import BaseModel, Field
-from app.tools.event_tools import search_events
+
 from app.data.events import events
-from fastapi import HTTPException
+from app.services.ai_provider import RuleBasedAIProvider
 from app.tools.event_tools import search_events, get_event_by_id
 app = FastAPI()
-
+ai_provider = RuleBasedAIProvider()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -70,7 +70,7 @@ class ChatResponse(BaseModel):
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
     try:
-        reply = generate_ai_response(request.message)
+        reply = ai_provider.generate_response(request.message)
 
         return ChatResponse(
             message=request.message,

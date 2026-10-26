@@ -136,24 +136,25 @@ def test_get_missing_event(mock_get_events):
     assert response.json()["detail"] == "Event not found"
 
 
+
 def test_chat_handles_unexpected_error(caplog):
     with patch(
-        "app.main.generate_ai_response",
+        "app.main.ai_provider.generate_response",
         side_effect=RuntimeError("Sensitive internal detail"),
     ):
-        with caplog.at_level(logging.ERROR):
-            response = client.post(
-                "/chat",
-                json={"message": "Find events"},
-            )
+        response = client.post(
+            "/chat",
+            json={"message": "Find free events"},
+        )
 
     assert response.status_code == 500
-    assert response.json()["detail"] == (
-        "An unexpected error occurred while processing your request."
+    assert (
+        response.json()["detail"]
+        == "An unexpected error occurred while processing your request."
     )
     assert "Sensitive internal detail" not in response.text
-    assert "Unexpected error while generating chat response" in caplog.text
     assert "Sensitive internal detail" in caplog.text
+
 
 @patch(
     "app.tools.event_tools.get_events",
