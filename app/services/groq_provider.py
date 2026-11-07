@@ -11,8 +11,7 @@ class GroqAIProvider(AIProvider):
             api_key=os.getenv("GROQ_API_KEY")
         )
 
-        self.model = "llama-3.3-70b-versatile"
-
+        self.model = "openai/gpt-oss-20b"
     def generate_response(self, message: str) -> str:
 
         completion = self.client.chat.completions.create(
