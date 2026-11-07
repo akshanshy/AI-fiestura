@@ -1,5 +1,5 @@
 
-from email.mime import text
+
 import re
 
 from app.tools.event_tools import search_events
