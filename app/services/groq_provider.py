@@ -1,6 +1,7 @@
 import os
 from groq import Groq
-
+import json
+from app.schemas.intent import EventIntent
 from app.services.ai_provider import AIProvider
 
 
@@ -27,5 +28,6 @@ class GroqAIProvider(AIProvider):
                 }
             ],
         )
+     
 
         return completion.choices[0].message.content
