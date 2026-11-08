@@ -12,3 +12,21 @@ Intent extraction and tool calling are not the same.
 - Intent extraction identifies what the user wants.
 - Tool calling allows the LLM to request execution of a function or tool.
 We'll implement both.
+
+Intent extraction: Identifying what a user wants from their message.
+
+
+
+Structured output: Representing extracted information in a predefined format.
+
+
+
+Pydantic: Validating data against a defined schema.
+
+
+
+Literal: Restricting a field to predefined values.
+
+
+
+Field constraints: Enforcing rules such as non-negative prices.
