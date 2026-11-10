@@ -28,6 +28,6 @@ class GroqAIProvider(AIProvider):
                 }
             ],
         )
-     
+       
 
         return completion.choices[0].message.content
