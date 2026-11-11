@@ -22,7 +22,24 @@ class RuleBasedAIProvider(AIProvider):
         normalized_message = message.lower()
 
         # 1. Check for event-search intent
-        search_terms = ["workshop", "hackathon", "conference", "find events"]
+        search_terms = [
+    "event",
+    "events",
+    "workshop",
+    "workshops",
+    "hackathon",
+    "hackathons",
+    "conference",
+    "conferences",
+    "seminar",
+    "seminars",
+    "coding contest",
+    "show me",
+    "find",
+    "search",
+    "looking for",
+    "recommend",
+]
         if any(term in normalized_message for term in search_terms):
             # Extract category (AI, technology, programming)
             category = None
