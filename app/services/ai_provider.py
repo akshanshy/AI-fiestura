@@ -99,3 +99,5 @@ class RuleBasedAIProvider(AIProvider):
 
         # 3. Fallback for anything unrelated
         return EventIntent(intent="out_of_scope")
+
+    
