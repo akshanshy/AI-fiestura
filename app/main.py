@@ -4,7 +4,7 @@ from typing import Optional
 
 from fastapi import FastAPI, Query, HTTPException
 from pydantic import BaseModel, Field
-
+from app.services.intent_router import route_message
 from app.data.events import events
 from app.services.provider_factory import get_ai_provider
 from app.tools.event_tools import search_events, get_event_by_id
@@ -70,23 +70,26 @@ class ChatResponse(BaseModel):
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
     try:
-        reply = ai_provider.generate_response(request.message)
+        result = route_message(
+            request.message,
+            ai_provider
+        )
 
         return ChatResponse(
             message=request.message,
-            reply=reply,
+            **result
         )
 
     except Exception:
         logger.exception(
-            "Unexpected error while generating chat response"
+            "Unexpected error while processing chat request"
         )
 
         raise HTTPException(
             status_code=500,
-            detail="An unexpected error occurred while processing your request.",
+            detail="An unexpected error occurred while processing your request."
         )
-
+    
 @app.get("/test-event-search")
 def test_event_search(max_price: int | None = None, category: str | None = None):
     return {"events": search_events(max_price, category)}
