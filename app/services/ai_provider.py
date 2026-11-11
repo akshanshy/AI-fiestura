@@ -1,3 +1,4 @@
+from asyncio import events
 import re
 from abc import ABC, abstractmethod
 from app.services.ai_service import generate_ai_response
@@ -13,6 +14,9 @@ class AIProvider(ABC):
     def extract_intent(self, message: str) -> EventIntent:
         pass
 
+    @abstractmethod
+    def generate_event_response(self, message: str, events: list) -> str:
+        pass
 
 class RuleBasedAIProvider(AIProvider):
     def generate_response(self, message: str) -> str:
@@ -99,5 +103,24 @@ class RuleBasedAIProvider(AIProvider):
 
         # 3. Fallback for anything unrelated
         return EventIntent(intent="out_of_scope")
+
+    def generate_event_response(self, message: str, events: list) -> str:
+
+        if not events:
+            return "No matching events were found in Fiestura."
+
+        lines = ["Here are the matching Fiestura events:"]
+
+        for event in events:
+            lines.append(
+                f"{event.get('title')} | "
+                f"Category: {event.get('category')} | "
+                f"Price: ₹{event.get('price')} | "
+                f"Location: {event.get('location')}"
+            )
+
+        return "\n".join(lines)
+
+    
 
     
