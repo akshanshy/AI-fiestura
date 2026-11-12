@@ -92,47 +92,47 @@ class GroqAIProvider(AIProvider):
 
         return EventIntent.model_validate(data)
     
-def generate_event_response(self, message: str, events: list) -> str:
-    import json
+    def generate_event_response(self, message: str, events: list) -> str:
+        import json
 
-    event_data = [
-        {
-            "id": event.get("_id"),
-            "title": event.get("title"),
-            "description": event.get("description"),
-            "category": event.get("category"),
-            "price": event.get("price"),
-            "location": event.get("location"),
-            "startDate": event.get("startDate"),
-            "endDate": event.get("endDate"),
-            "status": event.get("status"),
-        }
-        for event in events
-    ]
-
-    completion = self.client.chat.completions.create(
-        model=self.model,
-        messages=[
+        event_data = [
             {
-                "role": "system",
-                "content": (
-                    "You are AI-Fiestura, an assistant for the Fiestura "
-                    "event management platform. Answer using only the "
-                    "provided event data. Never invent event names, "
-                    "prices, dates, locations, or platform features. "
-                    "If information is unavailable, say so. "
-                    "Clearly explain when no matching events exist."
-                ),
-            },
-            {
-                "role": "user",
-                "content": (
-                    f"User request: {message}\n\n"
-                    f"Retrieved Fiestura events:\n"
-                    f"{json.dumps(event_data, ensure_ascii=False)}"
-                ),
-            },
-        ],
-    )
+                "id": event.get("_id"),
+                "title": event.get("title"),
+                "description": event.get("description"),
+                "category": event.get("category"),
+                "price": event.get("price"),
+                "location": event.get("location"),
+                "startDate": event.get("startDate"),
+                "endDate": event.get("endDate"),
+                "status": event.get("status"),
+            }
+            for event in events
+        ]
 
-    return completion.choices[0].message.content
+        completion = self.client.chat.completions.create(
+            model=self.model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are AI-Fiestura, an assistant for the Fiestura "
+                        "event management platform. Answer using only the "
+                        "provided event data. Never invent event names, "
+                        "prices, dates, locations, or platform features. "
+                        "If information is unavailable, say so. "
+                        "Clearly explain when no matching events exist."
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": (
+                        f"User request: {message}\n\n"
+                        f"Retrieved Fiestura events:\n"
+                        f"{json.dumps(event_data, ensure_ascii=False)}"
+                    ),
+                },
+            ],
+        )
+
+        return completion.choices[0].message.content
