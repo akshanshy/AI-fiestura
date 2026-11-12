@@ -65,7 +65,9 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     message: str
+    intent: str
     reply: str
+    events: list[dict] = Field(default_factory=list)
 
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
